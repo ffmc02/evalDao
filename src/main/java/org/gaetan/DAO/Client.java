@@ -1,10 +1,10 @@
 package org.gaetan.DAO;
 
 public class Client {
-    public int id;
-    public String Nom;
-    public String Prenom;
-    public String Ville;
+    private int id;
+    private String Nom;
+    private String Prenom;
+    private String Ville;
 
     public int getId() {
         return id;

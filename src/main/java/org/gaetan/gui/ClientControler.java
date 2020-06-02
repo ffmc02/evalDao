@@ -1,4 +1,13 @@
 package org.gaetan.gui;
 
-public class ClientControler {
+import javafx.fxml.Initializable;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class ClientControler implements Initializable {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+    }
 }
