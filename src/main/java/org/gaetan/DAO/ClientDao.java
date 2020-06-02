@@ -20,9 +20,10 @@ public class ClientDao extends connextion {
         PreparedStatement pstm;
         //try
         try {
-            pstm = this.con.prepareStatement("INSERT INTO client(cli_Name, cli_Firstnamecli_City) VALUE (?, ? )");
+            pstm = this.con.prepareStatement("INSERT INTO client(cli_Name, cli_Firstname, cli_City) VALUE (?, ? ,?)");
             pstm.setString(1, cli.getNom());
             pstm.setString(2, cli.getNom());
+            pstm.setString(3, cli.getVille());
             pstm.execute();
             pstm.close();
 
@@ -37,11 +38,11 @@ public class ClientDao extends connextion {
 
         PreparedStatement pstm;
         try {
-            pstm = this.con.prepareStatement("UPDATE client SET id= ?cli_Name= ?, cli_Firstname=?, cli_City=?");
-            pstm.setInt(1, cli.getId());
-            pstm.setString(2, cli.getNom());
-            pstm.setString(3, cli.getPrenom());
-            pstm.setString(4, cli.getVille());
+            pstm = this.con.prepareStatement("UPDATE client SET  cli_Name= ?, cli_Firstname=?, cli_City=? WHERE id=?");
+            pstm.setInt(4, cli.getId());
+            pstm.setString(1, cli.getNom());
+            pstm.setString(2, cli.getPrenom());
+            pstm.setString(3, cli.getVille());
 
             pstm.execute();
             pstm.close();
@@ -64,7 +65,7 @@ public class ClientDao extends connextion {
             while (res.next()) {
                 int id = res.getInt("id");
                 String nom = res.getString("cli_Name");
-                String prenom = res.getString("cli_Firstnale");
+                String prenom = res.getString("cli_Firstname");
                 String ville = res.getString("cli_City");
                 Client c = new Client(id, nom, prenom, ville);
                 listeClient.add(c);

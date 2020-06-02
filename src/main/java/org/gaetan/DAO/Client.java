@@ -6,6 +6,10 @@ public class Client {
     private String Prenom;
     private String Ville;
 
+    public Client(int id) {
+        this.id=id;
+    }
+
     public int getId() {
         return id;
     }
