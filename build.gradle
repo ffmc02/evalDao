@@ -9,6 +9,9 @@ version '0.1'
 sourceSets.main.resources.srcDirs("src/main/java").includes.addAll(["**/*.fxml", "**/*.css","**/*.png"])
 sourceSets.main.resources.srcDirs("src/main/resources").includes.addAll(["**/*.*"])
 
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
 repositories {
     mavenCentral()
 }

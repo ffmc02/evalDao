@@ -10,6 +10,7 @@ import org.gaetan.DAO.ClientDao;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 public class ClientControler implements Initializable {
     @FXML
@@ -137,11 +138,36 @@ public class ClientControler implements Initializable {
                 break;
             //a
             case "Modifier":
-                actionForm.Update(new Client(idSelectif, NameUser.getText(), FirstnameUser.getText(), CityUser.getText()));
-                Alert alUpdate = new Alert(Alert.AlertType.INFORMATION );
-                alUpdate.setTitle("MODIFICATION EFFECTUER");
-                alUpdate.setContentText("Les Coordonnées de votre clients ont été modifier avec succées.");
-                alUpdate.showAndWait();
+                String userName = NameUser.getText();
+                String userFirstname =Firstname.getText();
+                String userCity = CityUser.getText();
+                //Pour le regex mettre deux \\
+                boolean N = Pattern.matches("\\p{Alpha}.*" , userName );
+                boolean F = Pattern.matches("\\p{Alpha}",  userFirstname);
+                boolean C=Pattern.matches("\\p{Alpha}", userCity );
+                boolean result = N&F&C;
+                if (result){
+                    actionForm.Update(new Client(idSelectif, NameUser.getText(), FirstnameUser.getText(), CityUser.getText()));
+                    Alert alUpdate = new Alert(Alert.AlertType.INFORMATION );
+                    alUpdate.setTitle("MODIFICATION EFFECTUER");
+                    alUpdate.setContentText("Les Coordonnées de votre clients ont été modifier avec succées.");
+                    alUpdate.showAndWait();
+                } else {
+
+                 Alert alUpdate = new Alert(Alert.AlertType.WARNING );
+                alUpdate.setTitle("ERRUER D'ECRITURE ");
+                if(!N) {
+                    alUpdate.setContentText("Merci de ne mettre que des carractere Alphabétique dans le champs Nom");
+                }
+                if(!F){
+                    alUpdate.setContentText("Merci de ne mettre que des carractere Alphabétique dans le champs Prenom");
+            }
+                if(!C){
+                    alUpdate.setContentText("Merci de ne mettre que des carractere Alphabétique dans le champs Ville");
+                }
+                    alUpdate.showAndWait();
+                }
+             //  String userFirstname
                 break;
             case "Ajouter":
                 actionForm.Insert(new Client(idSelectif, NameUser.getText(), FirstnameUser.getText(), CityUser.getText()));
