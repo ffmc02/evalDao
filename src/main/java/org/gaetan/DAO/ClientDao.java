@@ -22,7 +22,7 @@ public class ClientDao extends connextion {
         try {
             pstm = this.con.prepareStatement("INSERT INTO client(cli_Name, cli_Firstname, cli_City) VALUE (?, ? ,?)");
             pstm.setString(1, cli.getNom());
-            pstm.setString(2, cli.getNom());
+            pstm.setString(2, cli.getPrenom());
             pstm.setString(3, cli.getVille());
             pstm.execute();
             pstm.close();

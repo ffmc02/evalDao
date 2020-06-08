@@ -5,14 +5,23 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.gaetan.DAO.Client;
 import org.gaetan.DAO.ClientDao;
+import org.kordamp.ikonli.fontawesome.FontAwesome;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 public class ClientControler implements Initializable {
+    public FontIcon iconeN;
+    public FontIcon iconeF;
+    public FontIcon iconeC;
+    public Label CityV;
+    public Label messageCity;
+
     @FXML
     TableView<Client> ListeClient;
     @FXML
@@ -30,7 +39,7 @@ public class ClientControler implements Initializable {
     @FXML
     TextField NameUser, FirstnameUser, CityUser;
     @FXML
-    Label TitleForm;
+    Label TitleForm, messageName, messageFirstname, messagCity;
     int idSelectif = 0;
 
     @Override
@@ -41,7 +50,7 @@ public class ClientControler implements Initializable {
         Name.setCellValueFactory(new PropertyValueFactory<>("Nom"));
         City.setCellValueFactory(new PropertyValueFactory<>("ville"));
         tableLoad();
-        Alert alStart = new Alert(Alert.AlertType.INFORMATION );
+        Alert alStart = new Alert(Alert.AlertType.INFORMATION);
         alStart.setTitle("DOnnée a jours ");
         alStart.setContentText("Bienvenue sur votre service de gestion de clientele, votre tableau est à jours.");
         alStart.showAndWait();
@@ -77,6 +86,9 @@ public class ClientControler implements Initializable {
     public void viewFormAddClient() {
         FormUser.setVisible(true);
         FormUser.setDisable(false);
+        iconeF.setVisible(false);
+        iconeC.setVisible(false);
+        iconeN.setVisible(false);
     }
     //cache le formulaire et dévérouille le tableau
 
@@ -85,6 +97,7 @@ public class ClientControler implements Initializable {
         FormUser.setDisable(true);
         ListeClient.setDisable(false);
         TitleForm.setText(" ");
+
         activateForm();
     }
 
@@ -122,6 +135,59 @@ public class ClientControler implements Initializable {
         CityUser.setDisable(false);
     }
 
+    //verificaation des champs
+    public boolean verifData() {
+
+        //je met mes donnée rentré par l'utilisateur dans des variable
+        String userName = NameUser.getText();
+        String userFirstname = Firstname.getText();
+        String userCity = CityUser.getText();
+        //Pour le regex mettre deux \\
+        //je nomme chaque boolean par rapport au varaible, je vérifie les regex en meme temps
+        boolean N = Pattern.matches("^[A-Z][\\p{L}- ]*$", userName);
+        boolean F = Pattern.matches("^[A-Z][\\p{L}- ]*$", userFirstname);
+        boolean C = Pattern.matches("^[A-Z][\\p{L}- ]*$", userCity);
+        if (N) {
+            messageName.setVisible(false);
+            iconeN.setIconCode(FontAwesome.CHECK_CIRCLE);
+            iconeN.setIconColor(Color.GREENYELLOW);
+            iconeN.setVisible(true);
+            messageName.setText("");
+        } else {
+            iconeN.setIconCode(FontAwesome.CLOSE);
+            iconeN.setIconColor(Color.RED);
+            messageName.setText("Veuillez ne metre que des carractere Alphabétique et Commencé par une Majuscule Dans le Champs Non ");
+            iconeN.setVisible(true);
+        }
+        if (F) {
+            messageFirstname.setVisible(false);
+            iconeF.setIconCode(FontAwesome.CHECK_CIRCLE);
+            iconeF.setIconColor(Color.GREENYELLOW);
+            iconeF.setVisible(true);
+            messageFirstname.setText("");
+        } else {
+            iconeF.setIconCode(FontAwesome.CLOSE);
+            iconeF.setIconColor(Color.RED);
+            messageFirstname.setText("Veuillez ne metre que des carractere Alphabétique et Commencé par une  Majuscule dans le Champs Prénom");
+            iconeF.setVisible(true);
+        }
+        if(C){
+            messageCity.setVisible(false);
+            iconeC.setIconCode(FontAwesome.CHECK_CIRCLE);
+            iconeC.setIconColor(Color.GREENYELLOW);
+            iconeC.setVisible(true);
+            messageCity.setText("");
+        } else {
+            iconeC.setIconCode(FontAwesome.CLOSE);
+            iconeC.setIconColor(Color.RED);
+            messageCity.setText("Veuillez ne metre que des carractere Alphabétique et Commencé par une Majuscule Dans le Champs Ville ");
+            iconeC.setVisible(true);
+        }
+        return N&F&C;
+    }
+
+
+
     //validation suivant le texte
     public void ValidateForm() {
         ClientDao actionForm = new ClientDao();
@@ -131,50 +197,32 @@ public class ClientControler implements Initializable {
             case "Supprimer":
                 //j'effectue l'action supprimer
                 actionForm.Delete(new Client(idSelectif));
-                Alert alDelete = new Alert(Alert.AlertType.WARNING );
+                Alert alDelete = new Alert(Alert.AlertType.WARNING);
                 alDelete.setTitle("CLient supprimée");
                 alDelete.setContentText("Votre client à été supprimier avec succées.");
                 alDelete.showAndWait();
                 break;
             //a
             case "Modifier":
-                String userName = NameUser.getText();
-                String userFirstname =Firstname.getText();
-                String userCity = CityUser.getText();
-                //Pour le regex mettre deux \\
-                boolean N = Pattern.matches("\\p{Alpha}.*" , userName );
-                boolean F = Pattern.matches("\\p{Alpha}",  userFirstname);
-                boolean C=Pattern.matches("\\p{Alpha}", userCity );
-                boolean result = N&F&C;
-                if (result){
-                    actionForm.Update(new Client(idSelectif, NameUser.getText(), FirstnameUser.getText(), CityUser.getText()));
-                    Alert alUpdate = new Alert(Alert.AlertType.INFORMATION );
-                    alUpdate.setTitle("MODIFICATION EFFECTUER");
-                    alUpdate.setContentText("Les Coordonnées de votre clients ont été modifier avec succées.");
-                    alUpdate.showAndWait();
-                } else {
+                if(verifData()){
+                // j'inserre mes dpnnée dans ma table
+                actionForm.Update(new Client(idSelectif, NameUser.getText(), FirstnameUser.getText(), CityUser.getText()));
 
-                 Alert alUpdate = new Alert(Alert.AlertType.WARNING );
-                alUpdate.setTitle("ERRUER D'ECRITURE ");
-                if(!N) {
-                    alUpdate.setContentText("Merci de ne mettre que des carractere Alphabétique dans le champs Nom");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("AJOUT EFFECTUER");
+                    alert.setContentText("Votre client à été Modifier avec succées.");
+                    alert.showAndWait();
                 }
-                if(!F){
-                    alUpdate.setContentText("Merci de ne mettre que des carractere Alphabétique dans le champs Prenom");
-            }
-                if(!C){
-                    alUpdate.setContentText("Merci de ne mettre que des carractere Alphabétique dans le champs Ville");
-                }
-                    alUpdate.showAndWait();
-                }
-             //  String userFirstname
                 break;
             case "Ajouter":
-                actionForm.Insert(new Client(idSelectif, NameUser.getText(), FirstnameUser.getText(), CityUser.getText()));
-                Alert alert = new Alert(Alert.AlertType.INFORMATION );
-                alert.setTitle("AJOUT EFFECTUER");
-                alert.setContentText("Votre client à été ajouté avec succées.");
-                alert.showAndWait();
+               if(verifData()){
+                   actionForm.Insert(new Client(idSelectif, NameUser.getText(), FirstnameUser.getText(), CityUser.getText()));
+                   Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                   alert.setTitle("AJOUT EFFECTUER");
+                   alert.setContentText("Votre client à été ajouté avec succées.");
+                   alert.showAndWait();
+               }
+
                 break;
             default:
                 Alert error = new Alert(Alert.AlertType.WARNING);
@@ -189,4 +237,5 @@ public class ClientControler implements Initializable {
         hideFormClient();
 
     }
+
 }
